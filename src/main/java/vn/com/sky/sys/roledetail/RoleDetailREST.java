@@ -109,6 +109,8 @@ public class RoleDetailREST extends GenericREST {
                                     .findByRoleIdAndDepartmentIdAndMenuId(item.getRoleId(), roleDetailWithControl.getDepartmentId(), roleDetailWithControl.getMenuId())
                                     .flatMap(
                                         foundRoleDetail -> {
+                                        	System.out.println("Update");
+                                        	System.out.println(foundRoleDetail);
                                             // update role_detail
                                             if (roleDetailWithControl.getChecked()) {
                                                 foundRoleDetail.setIsPrivate(roleDetailWithControl.getIsPrivate());
@@ -146,6 +148,8 @@ public class RoleDetailREST extends GenericREST {
                                                         }
                                                     );
                                             } else { // delete
+                                            	System.out.println("Delete");
+                                            	System.out.println(foundRoleDetail);
                                                 return roleControlRepo.deleteByRoleDetailId(foundRoleDetail.getId()).then(mainRepo.delete(foundRoleDetail));
                                             }
                                         }
@@ -160,7 +164,10 @@ public class RoleDetailREST extends GenericREST {
     }
 
     private Mono<List<RoleControl>> saveRoleDetail(ServerRequest request, Long roleId, RoleDetailWithControl roleDetailWithControl, RoleDetailReq roleDetailReq) {
-        return Mono.defer(
+    	System.out.println("Save");
+    	System.out.println(roleDetailWithControl);
+    	
+    	return Mono.defer(
             () -> {
                 if (roleDetailWithControl.getChecked()) {
                     var newRoleDetail = new RoleDetail();

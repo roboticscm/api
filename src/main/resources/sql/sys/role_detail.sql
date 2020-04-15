@@ -35,8 +35,8 @@ from menu m
 left join menu_control mc on mc.menu_id = m.id
 left join control ct on ct.id = mc.control_id
 inner join menu_org mo on mo.menu_id = m.id
-inner join owner_org dep on dep.id = mo.org_id
-inner join owner_org bra on bra.id = dep.parent_id and bra.parent_id in (' || sys_get_sub_org_ids(_owner_org_id, _include_deleted, _include_disabled)  || ')
+inner join owner_org dep on dep.id = mo.org_id and dep.id in (' || sys_get_sub_org_ids(_owner_org_id, _include_deleted, _include_disabled)  || ')
+inner join owner_org bra on bra.id = dep.parent_id 
 left join role_detail rd on rd.menu_org_id = mo.id and rd.role_id = %L 
 left join role_control rc on rc.menu_control_id = mc.id and rc.role_detail_id = rd.id
 where ' || get_deleted_cond_str('mc', _include_deleted) || '

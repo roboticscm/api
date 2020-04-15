@@ -191,8 +191,7 @@ public class OwnerOrgREST extends GenericREST {
 
         return customRepo.sysGetAvailableDepartmentTreeForMenu(menuId).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
     }
-    
-    
+
     private Mono<ServerResponse> sysGetHumanOrgTree(ServerRequest request) {
         // SYSTEM BLOCK CODE
         // PLEASE DO NOT EDIT
@@ -203,17 +202,15 @@ public class OwnerOrgREST extends GenericREST {
         // END SYSTEM BLOCK CODE
 
         Long humanId;
-		try {
-			humanId = getLongParam(request, "humanId", null);
-		} catch (Exception e1) {
-			humanId = null;
-		}
-
-        
+        try {
+            humanId = getLongParam(request, "humanId", null);
+        } catch (Exception e1) {
+            humanId = null;
+        }
 
         return customRepo.sysGetHumanOrgTree(humanId).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
     }
-    
+
     private Mono<ServerResponse> sysGetAssignedHumanOrgTree(ServerRequest request) {
         // SYSTEM BLOCK CODE
         // PLEASE DO NOT EDIT
@@ -224,15 +221,12 @@ public class OwnerOrgREST extends GenericREST {
         // END SYSTEM BLOCK CODE
 
         Long humanId;
-		try {
-			humanId = getLongParam(request, "humanId", null);
-		} catch (Exception e1) {
-			return error("humanId", "SYS.MSG.INVILID_HUMAN_ID");
-		}
-
-        
+        try {
+            humanId = getLongParam(request, "humanId", null);
+        } catch (Exception e1) {
+            return error("humanId", "SYS.MSG.INVILID_HUMAN_ID");
+        }
 
         return customRepo.sysGetAssignedHumanOrgTree(humanId).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
     }
-    
 }

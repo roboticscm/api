@@ -114,8 +114,7 @@ public class CustomOwnerOrgRepo extends BaseR2dbcRepository {
 
         return ret.as(String.class).fetch().first();
     }
-    
-    
+
     /*
    	-- Module: System (sys)
    	-- Section: Owner Org (ono)

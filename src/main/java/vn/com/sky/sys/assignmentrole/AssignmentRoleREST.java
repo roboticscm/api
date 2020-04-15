@@ -33,6 +33,7 @@ public class AssignmentRoleREST extends GenericREST {
     public RouterFunction<?> assignmentRoleRoutes() {
         return route(GET(buildURL("assignment-role", this::sysGetAllAssignmentRoleUserList)), this::sysGetAllAssignmentRoleUserList)
             .andRoute(GET(buildURL("assignment-role", this::sysGetRoleListOfUser)), this::sysGetRoleListOfUser)
+            .andRoute(GET(buildURL("assignment-role", this::sysGetRoleListOfUsers)), this::sysGetRoleListOfUsers)
             .andRoute(POST(buildURL("assignment-role", this::saveOrUpdateOrDelete)), this::saveOrUpdateOrDelete);
     }
 
@@ -101,6 +102,35 @@ public class AssignmentRoleREST extends GenericREST {
         return null;
     }
 
+    private Mono<ServerResponse> sysGetRoleListOfUsers(ServerRequest request) {
+        // SYSTEM BLOCK CODE
+        // PLEASE DO NOT EDIT
+        if (request == null) {
+            String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
+            return Mono.just(new MyServerResponse(methodName));
+        }
+        // END SYSTEM BLOCK CODE
+
+        var userIds = getParam(request, "userIds");
+
+        Boolean includeDeleted = false, includeDisabled = false;
+
+        try {
+            includeDeleted = super.getIncludeDeleted(request);
+            includeDisabled = super.getIncludeDisabled(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return badRequest().bodyValue(e.getMessage());
+        }
+
+        try {
+            return customRepo.sysGetRoleListOfUsers(userIds, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     private Mono<ServerResponse> saveOrUpdateOrDelete(ServerRequest request) {
         // SYSTEM BLOCK CODE
         // PLEASE DO NOT EDIT

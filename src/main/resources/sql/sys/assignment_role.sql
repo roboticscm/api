@@ -56,4 +56,30 @@ return  ret_val;
 end;
 $$ language plpgsql called on null input;
 
+-- Module: System (sys)
+-- Section: Assignment Role (asr)
+-- Function Description: Get role ids list of the many users
+-- Params:
+--  _user_ids: User Ids
+--  _include_deleted: Include deleted record
+--  _include_disabled: Include disabled record
+create or replace function sys_get_role_list_of_users(_user_ids text, _include_deleted bool, _include_disabled bool)
+returns text as $$
+declare 
+	_query text;
+	ret_val text;
+begin
+_query = format('select coalesce(json_agg(t), ''[]'')::text 
+from(
+	select user_id as "userId",  array_agg(role_id order by role_id) as "roleIds"
+	from assignment_role
+	where user_id in (%s)
+		and ' || get_deleted_cond_str(null, _include_deleted) || '
+		and ' || get_disabled_cond_str(null, _include_disabled) || '
+	group by user_id
+) as t', _user_ids);
 
+execute _query into ret_val;
+return  ret_val;
+end;
+$$ language plpgsql called on null input;

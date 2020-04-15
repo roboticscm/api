@@ -13,19 +13,21 @@ declare
 begin
 _query = 'select coalesce(json_agg(t), ''[]'')::text 
 from(
-	select id, last_name as "lastName", first_name as "firstName", username, default_owner_org_id as "defaultOwnerOrgId"
-	from human_or_org
-	where username is not null
-	and default_owner_org_id in (' || sys_get_sub_org_ids(_org_id, _include_deleted, _include_disabled)  || ')
-	and ' || get_deleted_cond_str(null, _include_deleted) || '
-	and ' || get_disabled_cond_str(null, _include_disabled) || '
-	order by first_name, last_name, created_date
+	select h.id, h.last_name as "lastName", h.first_name as "firstName", h.username, h.default_owner_org_id as "defaultOwnerOrgId", o.name as "departmentName"
+	from human_or_org h
+	inner join owner_org o on o.id = h.default_owner_org_id
+	where h.username is not null
+	and h.default_owner_org_id in (' || sys_get_sub_org_ids(_org_id, _include_deleted, _include_disabled)  || ')
+	and ' || get_deleted_cond_str('h', _include_deleted) || '
+	and ' || get_disabled_cond_str('h', _include_disabled) || '
+	order by h.first_name, h.last_name, h.created_date
 ) as t';
 
 execute _query into ret_val;
 return  ret_val;
 end;
 $$ language plpgsql called on null input;
+
 
 -- Module: System (sys)
 -- Section: Human or org (hoo)

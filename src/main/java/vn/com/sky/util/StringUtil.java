@@ -17,8 +17,8 @@ public class StringUtil {
     public static Boolean isBlank(String str) {
         return str == null || str.isBlank();
     }
-    
+
     public static String generateGUUID() {
-    	return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString();
     }
 }

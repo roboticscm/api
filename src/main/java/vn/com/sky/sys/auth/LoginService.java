@@ -87,7 +87,6 @@ public class LoginService {
                 }
             );
     }
-    
 
     public Mono<AuthResponse> login(ServerRequest request) throws Exception {
         ObjectMapper mapperObj = new ObjectMapper();
