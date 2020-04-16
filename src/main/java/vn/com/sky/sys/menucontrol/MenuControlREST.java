@@ -28,7 +28,10 @@ public class MenuControlREST extends GenericREST {
 
     @Bean
     public RouterFunction<?> menuControlRoutes() {
-        return route(GET(buildURL("menu-control", this::sysGetControlListByMenuPath)), this::sysGetControlListByMenuPath)
+        return route(
+                GET(buildURL("menu-control", this::sysGetControlListByMenuPath)),
+                this::sysGetControlListByMenuPath
+            )
             .andRoute(POST(buildURL("menu-control", this::saveOrUpdateOrDelete)), this::saveOrUpdateOrDelete);
     }
 

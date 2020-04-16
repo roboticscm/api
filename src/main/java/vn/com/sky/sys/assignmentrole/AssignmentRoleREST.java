@@ -31,7 +31,10 @@ public class AssignmentRoleREST extends GenericREST {
 
     @Bean
     public RouterFunction<?> assignmentRoleRoutes() {
-        return route(GET(buildURL("assignment-role", this::sysGetAllAssignmentRoleUserList)), this::sysGetAllAssignmentRoleUserList)
+        return route(
+                GET(buildURL("assignment-role", this::sysGetAllAssignmentRoleUserList)),
+                this::sysGetAllAssignmentRoleUserList
+            )
             .andRoute(GET(buildURL("assignment-role", this::sysGetRoleListOfUser)), this::sysGetRoleListOfUser)
             .andRoute(GET(buildURL("assignment-role", this::sysGetRoleListOfUsers)), this::sysGetRoleListOfUsers)
             .andRoute(POST(buildURL("assignment-role", this::saveOrUpdateOrDelete)), this::saveOrUpdateOrDelete);
@@ -57,7 +60,10 @@ public class AssignmentRoleREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetAllAssignmentRoleUserList(includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetAllAssignmentRoleUserList(includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -95,7 +101,10 @@ public class AssignmentRoleREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetRoleListOfUser(userId, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetRoleListOfUser(userId, includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,13 +133,16 @@ public class AssignmentRoleREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetRoleListOfUsers(userIds, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetRoleListOfUsers(userIds, includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-    
+
     private Mono<ServerResponse> saveOrUpdateOrDelete(ServerRequest request) {
         // SYSTEM BLOCK CODE
         // PLEASE DO NOT EDIT

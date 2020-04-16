@@ -18,7 +18,11 @@ public class CustomRoleControlRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetControlListByDepIdAndUserIdAndMenuPath(Long depId, Long userId, String menuPath) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "depId", "userId", "menuPath")).bind("userId", userId).bind("menuPath", menuPath);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "depId", "userId", "menuPath"))
+                .bind("userId", userId)
+                .bind("menuPath", menuPath);
 
         if (depId != null) ret = ret.bind("depId", depId); else ret = ret.bindNull("depId", Long.class);
 

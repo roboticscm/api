@@ -29,11 +29,17 @@ public class LocaleResourceREST extends GenericREST {
 
     @Bean
     public RouterFunction<?> localeResourceRoutes() {
-        return route(GET(buildURL("locale-resource", this::sysGetLocaleResourceListByCompanyIdAndLocale)), this::sysGetLocaleResourceListByCompanyIdAndLocale)
+        return route(
+                GET(buildURL("locale-resource", this::sysGetLocaleResourceListByCompanyIdAndLocale)),
+                this::sysGetLocaleResourceListByCompanyIdAndLocale
+            )
             .andRoute(GET(buildURL("locale-resource", this::sysGetUsedLanguages)), this::sysGetUsedLanguages)
             .andRoute(GET(buildURL("locale-resource", this::sysGetUsedLangTypeGroups)), this::sysGetUsedLangTypeGroups)
             .andRoute(GET(buildURL("locale-resource", this::sysGetUsedLangCategories)), this::sysGetUsedLangCategories)
-            .andRoute(GET(buildURL("locale-resource", this::sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup)), this::sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup)
+            .andRoute(
+                GET(buildURL("locale-resource", this::sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup)),
+                this::sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup
+            )
             .andRoute(GET(buildURL("locale-resource", this::sysGetAllLanguages)), this::sysGetAllLanguages)
             .andRoute(POST(buildURL("locale-resource", this::saveOrUpdateOrDelete)), this::saveOrUpdateOrDelete);
     }
@@ -73,7 +79,13 @@ public class LocaleResourceREST extends GenericREST {
                         .flatMap(
                             lr -> {
                                 return mainRepo
-                                    .findByComanyIdCategoryTypeGroupKeyAndLocale(lr.getCompanyId(), lr.getCategory(), lr.getTypeGroup(), lr.getKey(), lr.getLocale())
+                                    .findByComanyIdCategoryTypeGroupKeyAndLocale(
+                                        lr.getCompanyId(),
+                                        lr.getCategory(),
+                                        lr.getTypeGroup(),
+                                        lr.getKey(),
+                                        lr.getLocale()
+                                    )
                                     .flatMap(
                                         foundLocaleResource -> {
                                             return super.softDeleteEntity(mainRepo, foundLocaleResource, auth);
@@ -87,7 +99,13 @@ public class LocaleResourceREST extends GenericREST {
                         .flatMap(
                             lr -> {
                                 return mainRepo
-                                    .findByComanyIdCategoryTypeGroupKeyAndLocale(lr.getCompanyId(), lr.getCategory(), lr.getTypeGroup(), lr.getKey(), lr.getLocale())
+                                    .findByComanyIdCategoryTypeGroupKeyAndLocale(
+                                        lr.getCompanyId(),
+                                        lr.getCategory(),
+                                        lr.getTypeGroup(),
+                                        lr.getKey(),
+                                        lr.getLocale()
+                                    )
                                     .flatMap(
                                         foundLocaleResource -> {
                                             foundLocaleResource.setValue(lr.getNewValue());
@@ -98,7 +116,11 @@ public class LocaleResourceREST extends GenericREST {
                             }
                         );
 
-                    return Flux.merge(addFlux, removeFlux, editFlux).collectList().flatMap(item -> ok(item, List.class)).onErrorResume(e -> error(e));
+                    return Flux
+                        .merge(addFlux, removeFlux, editFlux)
+                        .collectList()
+                        .flatMap(item -> ok(item, List.class))
+                        .onErrorResume(e -> error(e));
                 }
             );
     }
@@ -123,7 +145,10 @@ public class LocaleResourceREST extends GenericREST {
             textSearch = null;
         }
         try {
-            return customRepo.sysGetUsedLangTypeGroups(textSearch).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetUsedLangTypeGroups(textSearch)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -146,7 +171,10 @@ public class LocaleResourceREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetUsedLangCategories(textSearch).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetUsedLangCategories(textSearch)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,7 +220,17 @@ public class LocaleResourceREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup(companyId, category, typeGroup, textSearch, page, pageSize).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup(
+                    companyId,
+                    category,
+                    typeGroup,
+                    textSearch,
+                    page,
+                    pageSize
+                )
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -231,7 +269,10 @@ public class LocaleResourceREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetLocaleResourceListByCompanyIdAndLocale(companyId, localeStr, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetLocaleResourceListByCompanyIdAndLocale(companyId, localeStr, includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -257,7 +298,10 @@ public class LocaleResourceREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetAllLanguages(includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetAllLanguages(includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }

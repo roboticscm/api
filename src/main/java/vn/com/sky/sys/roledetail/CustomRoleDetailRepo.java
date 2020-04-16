@@ -17,7 +17,12 @@ public class CustomRoleDetailRepo extends BaseR2dbcRepository {
 	--  includeDeleted: Include deleted record
 	--  includeDisabled: Include disabled record
 	*/
-    public Mono<String> sysGetMenuRoleControlList(Long ownerOrgId, Long roleId, Boolean includeDeleted, Boolean includeDisabled) {
+    public Mono<String> sysGetMenuRoleControlList(
+        Long ownerOrgId,
+        Long roleId,
+        Boolean includeDeleted,
+        Boolean includeDisabled
+    ) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
         var ret =

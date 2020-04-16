@@ -41,13 +41,6 @@ public class LanguageREST extends GenericREST {
         //			return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).bodyValue("OK");
         //		});
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
         return request
             .bodyToMono(Language.class)
             .flatMap(
@@ -76,7 +69,8 @@ public class LanguageREST extends GenericREST {
                                                 if (serverError.size() > 0) {
                                                     return error(serverError);
                                                 } else {
-                                                    return saveEntity(mainRepo, langReq, auth).flatMap(res -> ok(res, Language.class));
+                                                    return saveEntity(mainRepo, langReq, auth)
+                                                        .flatMap(res -> ok(res, Language.class));
                                                 }
                                             }
                                         );
@@ -105,7 +99,8 @@ public class LanguageREST extends GenericREST {
                                                             if (serverError.size() > 0) {
                                                                 return error(serverError);
                                                             } else {
-                                                                return updateEntity(mainRepo, langReq, auth).flatMap(res -> ok(res, Language.class));
+                                                                return updateEntity(mainRepo, langReq, auth)
+                                                                    .flatMap(res -> ok(res, Language.class));
                                                             }
                                                         }
                                                     );

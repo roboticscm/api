@@ -17,7 +17,12 @@ public class CustomMenuRepo extends BaseR2dbcRepository {
 	--  includeDeleted: Include deleted record
 	--  includeDisabled: Include disabled record
 	*/
-    public Mono<String> sysGetRoledMenuListByUserIdAndDepId(Long userId, Long depId, Boolean includeDeleted, Boolean includeDisabled) {
+    public Mono<String> sysGetRoledMenuListByUserIdAndDepId(
+        Long userId,
+        Long depId,
+        Boolean includeDeleted,
+        Boolean includeDisabled
+    ) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
         var ret =
@@ -64,7 +69,12 @@ public class CustomMenuRepo extends BaseR2dbcRepository {
 	--  includeDeleted: Include deleted record
 	--  includeDisabled: Include disabled record
 	*/
-    public Mono<String> sysGetFirstRoledMenuPathByUserIdAndDepId(Long userId, Long depId, Boolean includeDeleted, Boolean includeDisabled) {
+    public Mono<String> sysGetFirstRoledMenuPathByUserIdAndDepId(
+        Long userId,
+        Long depId,
+        Boolean includeDeleted,
+        Boolean includeDisabled
+    ) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
         var ret =
@@ -87,7 +97,10 @@ public class CustomMenuRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetAllMenuList(Boolean sortByCreatedDate) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "sortByCreatedDate")).bind("sortByCreatedDate", sortByCreatedDate);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "sortByCreatedDate"))
+                .bind("sortByCreatedDate", sortByCreatedDate);
 
         return ret.as(String.class).fetch().first();
     }

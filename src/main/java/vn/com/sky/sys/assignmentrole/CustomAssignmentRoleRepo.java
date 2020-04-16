@@ -18,7 +18,11 @@ public class CustomAssignmentRoleRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetAllAssignmentRoleUserList(Boolean includeDeleted, Boolean includeDisabled) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "includeDeleted", "includeDisabled")).bind("includeDeleted", includeDeleted).bind("includeDisabled", includeDisabled);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "includeDeleted", "includeDisabled"))
+                .bind("includeDeleted", includeDeleted)
+                .bind("includeDisabled", includeDisabled);
 
         return ret.as(String.class).fetch().first();
     }
@@ -35,13 +39,17 @@ public class CustomAssignmentRoleRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetRoleListOfUser(Long userId, Boolean includeDeleted, Boolean includeDisabled) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "userId", "includeDeleted", "includeDisabled")).bind("includeDeleted", includeDeleted).bind("includeDisabled", includeDisabled);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "userId", "includeDeleted", "includeDisabled"))
+                .bind("includeDeleted", includeDeleted)
+                .bind("includeDisabled", includeDisabled);
 
         if (userId == null) ret = ret.bindNull("userId", Long.class); else ret = ret.bind("userId", userId);
 
         return ret.as(String.class).fetch().first();
     }
-    
+
     /*
 	-- Module: System (sys)
 	-- Section: Assignment Role (asr)
@@ -54,11 +62,14 @@ public class CustomAssignmentRoleRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetRoleListOfUsers(String userIds, Boolean includeDeleted, Boolean includeDisabled) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "userIds", "includeDeleted", "includeDisabled")).bind("includeDeleted", includeDeleted).bind("includeDisabled", includeDisabled);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "userIds", "includeDeleted", "includeDisabled"))
+                .bind("includeDeleted", includeDeleted)
+                .bind("includeDisabled", includeDisabled);
 
         if (userIds == null) ret = ret.bindNull("userIds", String.class); else ret = ret.bind("userIds", userIds);
 
         return ret.as(String.class).fetch().first();
     }
 }
-

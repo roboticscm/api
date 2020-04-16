@@ -65,8 +65,12 @@ public class LoginService {
     public Mono<SimpleAuthResponse> loginWithoutGenToken(ServerRequest request) throws Exception {
         ObjectMapper mapperObj = new ObjectMapper();
 
-        var wrongPasswordException = new Exception(mapperObj.writeValueAsString(new SimpleAuthResponse("COMMON.MSG." + LoginResult.WRONG_PASSWORD)));
-        var wrongUsernameException = new Exception(mapperObj.writeValueAsString(new SimpleAuthResponse("COMMON.MSG." + LoginResult.WRONG_USERNAME)));
+        var wrongPasswordException = new Exception(
+            mapperObj.writeValueAsString(new SimpleAuthResponse("COMMON.MSG." + LoginResult.WRONG_PASSWORD))
+        );
+        var wrongUsernameException = new Exception(
+            mapperObj.writeValueAsString(new SimpleAuthResponse("COMMON.MSG." + LoginResult.WRONG_USERNAME))
+        );
 
         return request
             .bodyToMono(AuthRequest.class)
@@ -91,9 +95,15 @@ public class LoginService {
     public Mono<AuthResponse> login(ServerRequest request) throws Exception {
         ObjectMapper mapperObj = new ObjectMapper();
 
-        var wrongPasswordException = new Exception(mapperObj.writeValueAsString(new AuthResponse(LoginResult.WRONG_PASSWORD)));
-        var wrongUsernameException = new Exception(mapperObj.writeValueAsString(new AuthResponse(LoginResult.WRONG_USERNAME)));
-        var notSetCompanyException = new Exception(mapperObj.writeValueAsString(new AuthResponse(LoginResult.NOT_SET_COMPANY)));
+        var wrongPasswordException = new Exception(
+            mapperObj.writeValueAsString(new AuthResponse(LoginResult.WRONG_PASSWORD))
+        );
+        var wrongUsernameException = new Exception(
+            mapperObj.writeValueAsString(new AuthResponse(LoginResult.WRONG_USERNAME))
+        );
+        var notSetCompanyException = new Exception(
+            mapperObj.writeValueAsString(new AuthResponse(LoginResult.NOT_SET_COMPANY))
+        );
 
         return request
             .bodyToMono(AuthRequest.class)
@@ -138,7 +148,18 @@ public class LoginService {
                                                 }
 
                                                 return Mono.just(
-                                                    new AuthResponse(u.getId(), ar.getUsername(), u.getLastName(), u.getFirstName(), LoginResult.SUCCESS, token, lang, theme, alpha, companyId)
+                                                    new AuthResponse(
+                                                        u.getId(),
+                                                        ar.getUsername(),
+                                                        u.getLastName(),
+                                                        u.getFirstName(),
+                                                        LoginResult.SUCCESS,
+                                                        token,
+                                                        lang,
+                                                        theme,
+                                                        alpha,
+                                                        companyId
+                                                    )
                                                 );
                                             }
                                         );
@@ -164,19 +185,23 @@ public class LoginService {
                             u -> {
                                 var email = u.getEmail();
                                 if (email == null || email.trim().length() == 0) {
-                                    return Mono.error(new Exception("Please contact to the Admin to get an Email address."));
+                                    return Mono.error(
+                                        new Exception("Please contact to the Admin to get an Email address.")
+                                    );
                                 }
 
                                 u.setResetPasswordTime(SDate.now());
                                 u.setResetPasswordToken(UUID.randomUUID().toString());
                                 humanOrOrgRepo.save(u).subscribe();
 
-                                if (sendEmail(request, u)) return Mono.just("Please check your email to complete reset password"); else return Mono.just(
-                                    "Reset password fail. Please contact to the Admin"
-                                );
+                                if (sendEmail(request, u)) return Mono.just(
+                                    "Please check your email to complete reset password"
+                                ); else return Mono.just("Reset password fail. Please contact to the Admin");
                             }
                         )
-                        .switchIfEmpty(Mono.error(new Exception("Maybe your Username is incorrect. Please try another one.")));
+                        .switchIfEmpty(
+                            Mono.error(new Exception("Maybe your Username is incorrect. Please try another one."))
+                        );
                 }
             );
     }
@@ -208,7 +233,9 @@ public class LoginService {
         try {
             msg.setTo(user.getEmail());
             msg.setSubject("Reset your password");
-            msg.setText("To reset your password, click the link below:\n" + appUrl + "?token=" + user.getResetPasswordToken());
+            msg.setText(
+                "To reset your password, click the link below:\n" + appUrl + "?token=" + user.getResetPasswordToken()
+            );
 
             javaMailSender.send(msg);
             return true;
@@ -307,12 +334,21 @@ public class LoginService {
             String substring = userAgent.substring(userAgent.indexOf("MSIE")).split(";")[0];
             browser = substring.split(" ")[0].replace("MSIE", "IE") + "-" + substring.split(" ")[1];
         } else if (user.contains("safari") && user.contains("version")) {
-            browser = (userAgent.substring(userAgent.indexOf("Safari")).split(" ")[0]).split("/")[0] + "-" + (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1];
+            browser =
+                (userAgent.substring(userAgent.indexOf("Safari")).split(" ")[0]).split("/")[0] +
+                "-" +
+                (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1];
         } else if (user.contains("opr") || user.contains("opera")) {
             if (user.contains("opera")) browser =
-                (userAgent.substring(userAgent.indexOf("Opera")).split(" ")[0]).split("/")[0] + "-" + (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1]; else if (
+                (userAgent.substring(userAgent.indexOf("Opera")).split(" ")[0]).split("/")[0] +
+                "-" +
+                (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1]; else if (
                 user.contains("opr")
-            ) browser = ((userAgent.substring(userAgent.indexOf("OPR")).split(" ")[0]).replace("/", "-")).replace("OPR", "Opera");
+            ) browser =
+                ((userAgent.substring(userAgent.indexOf("OPR")).split(" ")[0]).replace("/", "-")).replace(
+                        "OPR",
+                        "Opera"
+                    );
         } else if (user.contains("coc_coc_browser")) {
             browser = (userAgent.substring(userAgent.indexOf("coc_coc")).split(" ")[0]).replace("/", "-");
         } else if (user.contains("chrome")) {
@@ -387,12 +423,22 @@ public class LoginService {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
-            String jsonString = mapper.writeValueAsString(new HasuraClaims("user", new String[] { "user" }, username, userId));
+            String jsonString = mapper.writeValueAsString(
+                new HasuraClaims("user", new String[] { "user" }, username, userId)
+            );
             payload.put("https://hasura.io/jwt/claims", jsonString);
             privateKey = readFileToString(getFullFileName("private-pkcs8.pem"));
             PrivateKey pvtKey = getPrivateKey(privateKey);
             token =
-                Jwts.builder().setClaims(payload).setSubject(username).setIssuedAt(createdDate).setExpiration(expirationDate).setHeader(header).signWith(pvtKey, SignatureAlgorithm.RS256).compact();
+                Jwts
+                    .builder()
+                    .setClaims(payload)
+                    .setSubject(username)
+                    .setIssuedAt(createdDate)
+                    .setExpiration(expirationDate)
+                    .setHeader(header)
+                    .signWith(pvtKey, SignatureAlgorithm.RS256)
+                    .compact();
         } catch (Exception e) {
             e.printStackTrace();
         }

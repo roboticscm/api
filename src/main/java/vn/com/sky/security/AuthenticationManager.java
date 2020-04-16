@@ -56,7 +56,10 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                 username,
                 null,
-                role.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList())
+                role
+                    .stream()
+                    .map(authority -> new SimpleGrantedAuthority(authority.name()))
+                    .collect(Collectors.toList())
             );
             return Mono.just(auth);
         } else {

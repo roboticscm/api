@@ -19,7 +19,11 @@ public class CustomHumanOrOrgRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetUserListByOrgId(Long orgId, Boolean includeDeleted, Boolean includeDisabled) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "orgId", "includeDeleted", "includeDisabled")).bind("includeDeleted", includeDeleted).bind("includeDisabled", includeDisabled);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "orgId", "includeDeleted", "includeDisabled"))
+                .bind("includeDeleted", includeDeleted)
+                .bind("includeDisabled", includeDisabled);
 
         if (orgId == null) ret = ret.bindNull("orgId", Long.class); else ret = ret.bind("orgId", orgId);
 

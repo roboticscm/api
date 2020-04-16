@@ -22,7 +22,8 @@ import reactor.core.publisher.Mono;
  */
 
 @Component
-public class SecurityContextRepository extends WebSessionServerSecurityContextRepository /*implements ServerSecurityContextRepository*/{
+public class SecurityContextRepository
+    extends WebSessionServerSecurityContextRepository /*implements ServerSecurityContextRepository*/{
     public static final String seperator = "||| ";
     public static final String screenSeperator = "!!!";
 
@@ -86,7 +87,10 @@ public class SecurityContextRepository extends WebSessionServerSecurityContextRe
             var funcIndex = authHeader.indexOf(screenSeperator, screenIndex);
 
             if (screenIndex >= 0 && funcIndex >= 0) {
-                return authHeader.substring(screenIndex + screenSeperator.length(), screenIndex + screenSeperator.length() + funcIndex);
+                return authHeader.substring(
+                    screenIndex + screenSeperator.length(),
+                    screenIndex + screenSeperator.length() + funcIndex
+                );
             }
         }
 

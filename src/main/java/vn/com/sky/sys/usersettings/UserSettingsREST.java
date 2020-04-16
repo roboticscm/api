@@ -53,7 +53,10 @@ public class UserSettingsREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetUserSettings(auth.getUserId(), companyId).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetUserSettings(auth.getUserId(), companyId)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -83,7 +86,10 @@ public class UserSettingsREST extends GenericREST {
         if (controlId == null) return badRequest().bodyValue("SYS.MSG.INVILID_CONTROL_ID");
 
         try {
-            return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(mainRepo.findByUserIdAndMenuPathAndControlId(userId, menuPathStr, controlId), UserSettings.class);
+            return ServerResponse
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(mainRepo.findByUserIdAndMenuPathAndControlId(userId, menuPathStr, controlId), UserSettings.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,7 +115,12 @@ public class UserSettingsREST extends GenericREST {
                         .flatMap(
                             key -> {
                                 return mainRepo
-                                    .findByUserIdAndMenuPathAndControlIdAndKey(auth.getUserId(), req.getMenuPath(), req.getControlId(), key)
+                                    .findByUserIdAndMenuPathAndControlIdAndKey(
+                                        auth.getUserId(),
+                                        req.getMenuPath(),
+                                        req.getControlId(),
+                                        key
+                                    )
                                     .flatMap(
                                         foundUserSettings -> {
                                             // update

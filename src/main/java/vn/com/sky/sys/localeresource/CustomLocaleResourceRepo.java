@@ -17,7 +17,12 @@ public class CustomLocaleResourceRepo extends BaseR2dbcRepository {
 	--  includeDeleted: Include deleted record
 	--  includeDisabled: Include disabled record
 	*/
-    public Mono<String> sysGetLocaleResourceListByCompanyIdAndLocale(Long companyId, String locale, Boolean includeDeleted, Boolean includeDisabled) {
+    public Mono<String> sysGetLocaleResourceListByCompanyIdAndLocale(
+        Long companyId,
+        String locale,
+        Boolean includeDeleted,
+        Boolean includeDisabled
+    ) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
         var ret =
@@ -44,7 +49,8 @@ public class CustomLocaleResourceRepo extends BaseR2dbcRepository {
 
         var ret = this.databaseClient().execute(genSql(methodName, "textSearch"));
 
-        if (textSearch != null) ret = ret.bind("textSearch", textSearch); else ret = ret.bindNull("textSearch", String.class);
+        if (textSearch != null) ret = ret.bind("textSearch", textSearch); else ret =
+            ret.bindNull("textSearch", String.class);
 
         return ret.as(String.class).fetch().first();
     }
@@ -54,7 +60,8 @@ public class CustomLocaleResourceRepo extends BaseR2dbcRepository {
 
         var ret = this.databaseClient().execute(genSql(methodName, "textSearch"));
 
-        if (textSearch != null) ret = ret.bind("textSearch", textSearch); else ret = ret.bindNull("textSearch", String.class);
+        if (textSearch != null) ret = ret.bind("textSearch", textSearch); else ret =
+            ret.bindNull("textSearch", String.class);
 
         return ret.as(String.class).fetch().first();
     }
@@ -62,7 +69,11 @@ public class CustomLocaleResourceRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetAllLanguages(Boolean includeDeleted, Boolean includeDisabled) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "includeDeleted", "includeDisabled")).bind("includeDeleted", includeDeleted).bind("includeDisabled", includeDisabled);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "includeDeleted", "includeDisabled"))
+                .bind("includeDeleted", includeDeleted)
+                .bind("includeDisabled", includeDisabled);
 
         return ret.as(String.class).fetch().first();
     }
@@ -78,7 +89,14 @@ public class CustomLocaleResourceRepo extends BaseR2dbcRepository {
 	--  _text_search
 	*/
 
-    public Mono<String> sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup(long companyId, String category, String typeGroup, String textSearch, Long page, Long pageSize) {
+    public Mono<String> sysGetLocaleResourceByCompanyIdAndCatAndTypeGroup(
+        long companyId,
+        String category,
+        String typeGroup,
+        String textSearch,
+        Long page,
+        Long pageSize
+    ) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
         System.out.println(page);
@@ -92,9 +110,11 @@ public class CustomLocaleResourceRepo extends BaseR2dbcRepository {
 
         if (category == null) ret = ret.bindNull("category", String.class); else ret = ret.bind("category", category);
 
-        if (typeGroup == null) ret = ret.bindNull("typeGroup", String.class); else ret = ret.bind("typeGroup", typeGroup);
+        if (typeGroup == null) ret = ret.bindNull("typeGroup", String.class); else ret =
+            ret.bind("typeGroup", typeGroup);
 
-        if (textSearch == null) ret = ret.bindNull("textSearch", String.class); else ret = ret.bind("textSearch", textSearch);
+        if (textSearch == null) ret = ret.bindNull("textSearch", String.class); else ret =
+            ret.bind("textSearch", textSearch);
 
         return ret.as(String.class).fetch().first();
     }

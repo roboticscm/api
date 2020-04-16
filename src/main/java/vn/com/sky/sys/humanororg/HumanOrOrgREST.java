@@ -95,7 +95,10 @@ public class HumanOrOrgREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetUserListByOrgId(orgId, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetUserListByOrgId(orgId, includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,9 +130,22 @@ public class HumanOrOrgREST extends GenericREST {
                                     return saveEntity(mainRepo, humanReq, auth)
                                         .flatMap(
                                             saved -> {
-                                                return saveManyRelation(humanOrgRepo, saved.getId(), humanReq.getInsertDepartmentIds(), new SaveRelation(), auth)
+                                                return saveManyRelation(
+                                                        humanOrgRepo,
+                                                        saved.getId(),
+                                                        humanReq.getInsertDepartmentIds(),
+                                                        new SaveRelation(),
+                                                        auth
+                                                    )
                                                     .flatMap(item -> ok(item, HumanOrOrg.class))
-                                                    .then(deleteManyRelation(humanOrgRepo, saved.getId(), humanReq.getRemoveDepartmentIds()).flatMap(res -> ok(res, List.class)));
+                                                    .then(
+                                                        deleteManyRelation(
+                                                                humanOrgRepo,
+                                                                saved.getId(),
+                                                                humanReq.getRemoveDepartmentIds()
+                                                            )
+                                                            .flatMap(res -> ok(res, List.class))
+                                                    );
                                             }
                                         );
                                 }
@@ -174,9 +190,22 @@ public class HumanOrOrgREST extends GenericREST {
                                                 return updateEntity(mainRepo, humanReq, auth)
                                                     .flatMap(
                                                         updated -> {
-                                                            return saveManyRelation(humanOrgRepo, updated.getId(), humanReq.getInsertDepartmentIds(), new SaveRelation(), auth)
+                                                            return saveManyRelation(
+                                                                    humanOrgRepo,
+                                                                    updated.getId(),
+                                                                    humanReq.getInsertDepartmentIds(),
+                                                                    new SaveRelation(),
+                                                                    auth
+                                                                )
                                                                 .flatMap(item -> ok(item, HumanOrOrg.class))
-                                                                .then(deleteManyRelation(humanOrgRepo, updated.getId(), humanReq.getRemoveDepartmentIds()).flatMap(res -> ok(res, List.class)));
+                                                                .then(
+                                                                    deleteManyRelation(
+                                                                            humanOrgRepo,
+                                                                            updated.getId(),
+                                                                            humanReq.getRemoveDepartmentIds()
+                                                                        )
+                                                                        .flatMap(res -> ok(res, List.class))
+                                                                );
                                                         }
                                                     );
                                             }

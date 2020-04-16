@@ -23,7 +23,10 @@ public class RoleControlREST extends GenericREST {
 
     @Bean
     public RouterFunction<?> roleControlRoutes() {
-        return route(GET(buildURL("role-control", this::sysGetControlListByDepIdAndUserIdAndMenuPath)), this::sysGetControlListByDepIdAndUserIdAndMenuPath);
+        return route(
+            GET(buildURL("role-control", this::sysGetControlListByDepIdAndUserIdAndMenuPath)),
+            this::sysGetControlListByDepIdAndUserIdAndMenuPath
+        );
     }
 
     private Mono<ServerResponse> sysGetControlListByDepIdAndUserIdAndMenuPath(ServerRequest request) {
@@ -49,7 +52,10 @@ public class RoleControlREST extends GenericREST {
         if (menuPath == null) return badRequest().bodyValue("SYS.MSG.INVILID_MENU_PATH");
 
         try {
-            return customRepo.sysGetControlListByDepIdAndUserIdAndMenuPath(depId, auth.getUserId(), menuPath).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetControlListByDepIdAndUserIdAndMenuPath(depId, auth.getUserId(), menuPath)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
             return null;

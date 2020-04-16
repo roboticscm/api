@@ -16,7 +16,6 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import vn.com.sky.base.GenericREST;
-import vn.com.sky.base.RepoUtil;
 import vn.com.sky.security.AuthenticationManager;
 import vn.com.sky.sys.menucontrol.MenuControlRepo;
 import vn.com.sky.sys.menuorg.MenuOrgRepo;
@@ -83,7 +82,10 @@ public class RoleDetailREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetMenuRoleControlList(ownerOrgId, roleId, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetMenuRoleControlList(ownerOrgId, roleId, includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -102,59 +104,92 @@ public class RoleDetailREST extends GenericREST {
                 item -> {
                     return Flux
                         .fromIterable(item.getRoleDetailWithControls())
-                        .filter(roleDetailWithControl -> roleDetailWithControl.getMenuName() != null && roleDetailWithControl.getMenuName().trim().length() > 0)
+                        .filter(
+                            roleDetailWithControl ->
+                                roleDetailWithControl.getMenuName() != null &&
+                                roleDetailWithControl.getMenuName().trim().length() > 0
+                        )
                         .flatMap(
                             roleDetailWithControl -> {
                                 return mainRepo
-                                    .findByRoleIdAndDepartmentIdAndMenuId(item.getRoleId(), roleDetailWithControl.getDepartmentId(), roleDetailWithControl.getMenuId())
+                                    .findByRoleIdAndDepartmentIdAndMenuId(
+                                        item.getRoleId(),
+                                        roleDetailWithControl.getDepartmentId(),
+                                        roleDetailWithControl.getMenuId()
+                                    )
                                     .flatMap(
                                         foundRoleDetail -> {
-                                        	System.out.println("Update");
-                                        	System.out.println(foundRoleDetail);
                                             // update role_detail
                                             if (roleDetailWithControl.getChecked()) {
                                                 foundRoleDetail.setIsPrivate(roleDetailWithControl.getIsPrivate());
                                                 foundRoleDetail.setApprove(roleDetailWithControl.getApprove());
                                                 foundRoleDetail.setDataLevel(roleDetailWithControl.getDataLevel());
-                                                return RepoUtil
-                                                    .update(mainRepo, foundRoleDetail, auth)
+                                                return 
+                                                    updateEntity(mainRepo, foundRoleDetail, auth)
                                                     .flatMap(
                                                         updatedRoleDetail -> {
                                                             return Flux
                                                                 .fromIterable(item.getRoleDetailWithControls())
                                                                 .filter(
                                                                     roleControl ->
-                                                                        roleControl.getDepartmentId() == roleDetailWithControl.getDepartmentId() &&
-                                                                        roleControl.getMenuId() == roleDetailWithControl.getMenuId()
+                                                                        roleControl.getDepartmentId().equals(roleDetailWithControl.getDepartmentId())
+                                                                         &&
+                                                                        roleControl.getMenuId().equals(roleDetailWithControl.getMenuId())
+                                                                        
                                                                 )
                                                                 .flatMap(
                                                                     roleControl -> {
                                                                         return roleControlRepo
-                                                                            .findByRoleDetailIdAndMenuIdAndControlId(foundRoleDetail.getId(), roleControl.getMenuId(), roleControl.getControlId())
+                                                                            .findByRoleDetailIdAndMenuIdAndControlId(
+                                                                                foundRoleDetail.getId(),
+                                                                                roleControl.getMenuId(),
+                                                                                roleControl.getControlId()
+                                                                            )
                                                                             .flatMap(
                                                                                 foundRoleControl -> {
+                                                                                	System.out.println("call 111");
                                                                                     // update role control
-                                                                                    foundRoleControl.setRenderControl(roleControl.getRenderControl());
-                                                                                    foundRoleControl.setDisableControl(roleControl.getDisableControl());
-                                                                                    foundRoleControl.setConfirm(roleControl.getConfirm());
-                                                                                    foundRoleControl.setRequirePassword(roleControl.getRequirePassword());
-                                                                                    return RepoUtil.update(roleControlRepo, foundRoleControl, auth);
+                                                                                    foundRoleControl.setRenderControl(
+                                                                                        roleControl.getRenderControl()
+                                                                                    );
+                                                                                    foundRoleControl.setDisableControl(
+                                                                                        roleControl.getDisableControl()
+                                                                                    );
+                                                                                    foundRoleControl.setConfirm(
+                                                                                        roleControl.getConfirm()
+                                                                                    );
+                                                                                    foundRoleControl.setRequirePassword(
+                                                                                        roleControl.getRequirePassword()
+                                                                                    );
+                                                                                    return updateEntity(
+                                                                                        roleControlRepo,
+                                                                                        foundRoleControl,
+                                                                                        auth
+                                                                                    );
                                                                                 }
                                                                             )
-                                                                            .switchIfEmpty(saveRoleControl(request, foundRoleDetail.getId(), roleControl)); // save role control
+                                                                            .switchIfEmpty(
+                                                                                saveRoleControl(
+                                                                                    request,
+                                                                                    foundRoleDetail.getId(),
+                                                                                    roleControl
+                                                                                )
+                                                                            ); // save role control
                                                                     }
                                                                 )
                                                                 .collectList();
                                                         }
                                                     );
                                             } else { // delete
-                                            	System.out.println("Delete");
-                                            	System.out.println(foundRoleDetail);
-                                                return roleControlRepo.deleteByRoleDetailId(foundRoleDetail.getId()).then(mainRepo.delete(foundRoleDetail));
+                                                return roleControlRepo
+                                                    .deleteByRoleDetailId(foundRoleDetail.getId())
+                                                    .then(mainRepo.delete(foundRoleDetail));
                                             }
                                         }
                                     )
-                                    .switchIfEmpty(saveRoleDetail(request, item.getRoleId(), roleDetailWithControl, item)); // add new
+                                    .switchIfEmpty(
+                                        saveRoleDetail(request, item.getRoleId(), roleDetailWithControl, item)
+                                    ); // add new
                             }
                         )
                         .collectList()
@@ -163,11 +198,14 @@ public class RoleDetailREST extends GenericREST {
             );
     }
 
-    private Mono<List<RoleControl>> saveRoleDetail(ServerRequest request, Long roleId, RoleDetailWithControl roleDetailWithControl, RoleDetailReq roleDetailReq) {
-    	System.out.println("Save");
-    	System.out.println(roleDetailWithControl);
-    	
-    	return Mono.defer(
+    private Mono<List<RoleControl>> saveRoleDetail(
+        ServerRequest request,
+        Long roleId,
+        RoleDetailWithControl roleDetailWithControl,
+        RoleDetailReq roleDetailReq
+    ) {
+
+        return Mono.defer(
             () -> {
                 if (roleDetailWithControl.getChecked()) {
                     var newRoleDetail = new RoleDetail();
@@ -178,35 +216,64 @@ public class RoleDetailREST extends GenericREST {
                     newRoleDetail.setDataLevel(roleDetailWithControl.getDataLevel());
 
                     return menuOrgRepo
-                        .findByMenuIdAndOrgId(roleDetailWithControl.getMenuId(), roleDetailWithControl.getDepartmentId())
+                        .findByMenuIdAndOrgId(
+                            roleDetailWithControl.getMenuId(),
+                            roleDetailWithControl.getDepartmentId()
+                        )
                         .flatMap(
                             menuOrg -> {
                                 newRoleDetail.setMenuOrgId(menuOrg.getId());
-                                return RepoUtil
-                                    .save(mainRepo, newRoleDetail, auth)
+                                return 
+                                    saveEntity(mainRepo, newRoleDetail, auth)
                                     .flatMap(
                                         savedRoleDetail -> {
                                             return Flux
                                                 .fromIterable(roleDetailReq.getRoleDetailWithControls())
                                                 .filter(
-                                                    roleControl ->
-                                                        roleControl.getDepartmentId() == roleDetailWithControl.getDepartmentId() && roleControl.getMenuId() == roleDetailWithControl.getMenuId()
+                                                    roleControl -> {
+                                                        return roleControl.getDepartmentId().equals(roleDetailWithControl.getDepartmentId()) 
+                                                         &&
+                                                        roleControl.getMenuId().equals(roleDetailWithControl.getMenuId()) ;
+                                                    }
                                                 )
                                                 .flatMap(
                                                     roleControl -> {
                                                         return roleControlRepo
-                                                            .findByRoleDetailIdAndMenuIdAndControlId(savedRoleDetail.getId(), roleControl.getMenuId(), roleControl.getControlId())
+                                                            .findByRoleDetailIdAndMenuIdAndControlId(
+                                                                savedRoleDetail.getId(),
+                                                                roleControl.getMenuId(),
+                                                                roleControl.getControlId()
+                                                            )
                                                             .flatMap(
                                                                 foundRoleControl -> {
+                                                                	System.out.println("call 222");
                                                                     // update role control
-                                                                    foundRoleControl.setRenderControl(roleControl.getRenderControl());
-                                                                    foundRoleControl.setDisableControl(roleControl.getDisableControl());
-                                                                    foundRoleControl.setConfirm(roleControl.getConfirm());
-                                                                    foundRoleControl.setRequirePassword(roleControl.getRequirePassword());
-                                                                    return RepoUtil.update(roleControlRepo, foundRoleControl, auth);
+                                                                    foundRoleControl.setRenderControl(
+                                                                        roleControl.getRenderControl()
+                                                                    );
+                                                                    foundRoleControl.setDisableControl(
+                                                                        roleControl.getDisableControl()
+                                                                    );
+                                                                    foundRoleControl.setConfirm(
+                                                                        roleControl.getConfirm()
+                                                                    );
+                                                                    foundRoleControl.setRequirePassword(
+                                                                        roleControl.getRequirePassword()
+                                                                    );
+                                                                    return updateEntity(
+                                                                        roleControlRepo,
+                                                                        foundRoleControl,
+                                                                        auth
+                                                                    );
                                                                 }
                                                             )
-                                                            .switchIfEmpty(saveRoleControl(request, savedRoleDetail.getId(), roleControl)); // save role control
+                                                            .switchIfEmpty(
+                                                                saveRoleControl(
+                                                                    request,
+                                                                    savedRoleDetail.getId(),
+                                                                    roleControl
+                                                                )
+                                                            ); // save role control
                                                     }
                                                 )
                                                 .collectList();
@@ -221,7 +288,12 @@ public class RoleDetailREST extends GenericREST {
         );
     }
 
-    private Mono<RoleControl> saveRoleControl(ServerRequest request, Long roleDetailId, RoleDetailWithControl roleDetailWithControl) {
+    private Mono<RoleControl> saveRoleControl(
+        ServerRequest request,
+        Long roleDetailId,
+        RoleDetailWithControl roleDetailWithControl
+    ) {
+    	System.out.println("call");
         return Mono.defer(
             () -> {
                 var newRoleControl = new RoleControl();
@@ -236,8 +308,10 @@ public class RoleDetailREST extends GenericREST {
                     .findByMenuIdAndControlId(roleDetailWithControl.getMenuId(), roleDetailWithControl.getControlId())
                     .flatMap(
                         foundRoleControl -> {
+                        	System.out.println("xxxxxx");
+                        	System.out.println(newRoleControl);
                             newRoleControl.setMenuControlId(foundRoleControl.getId());
-                            return RepoUtil.save(roleControlRepo, newRoleControl, auth);
+                            return saveEntity(roleControlRepo, newRoleControl, auth);
                         }
                     );
             }

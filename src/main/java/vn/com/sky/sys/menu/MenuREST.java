@@ -38,12 +38,21 @@ public class MenuREST extends GenericREST {
 
     @Bean
     public RouterFunction<?> menuRoutes() {
-        return route(GET(buildURL("menu", this::sysGetFirstRoledMenuPathByUserIdAndDepId)), this::sysGetFirstRoledMenuPathByUserIdAndDepId)
-            .andRoute(GET(buildURL("menu", this::sysGetRoledMenuPathListByUserId)), this::sysGetRoledMenuPathListByUserId)
+        return route(
+                GET(buildURL("menu", this::sysGetFirstRoledMenuPathByUserIdAndDepId)),
+                this::sysGetFirstRoledMenuPathByUserIdAndDepId
+            )
+            .andRoute(
+                GET(buildURL("menu", this::sysGetRoledMenuPathListByUserId)),
+                this::sysGetRoledMenuPathListByUserId
+            )
             .andRoute(GET(buildURL("menu", this::sysGetAllMenuList)), this::sysGetAllMenuList)
             .andRoute(GET(buildURL("menu", this::sysGetMenuById)), this::sysGetMenuById)
             .andRoute(GET(buildURL("menu", this::sysGetMenuByPath)), this::sysGetMenuByPath)
-            .andRoute(GET(buildURL("menu", this::sysGetRoledMenuListByUserIdAndDepId)), this::sysGetRoledMenuListByUserIdAndDepId)
+            .andRoute(
+                GET(buildURL("menu", this::sysGetRoledMenuListByUserIdAndDepId)),
+                this::sysGetRoledMenuListByUserIdAndDepId
+            )
             .andRoute(POST(buildURL("menu", this::saveOrUpdate)), this::saveOrUpdate)
             .andRoute(DELETE(buildURL("menu", this::deleteMany)), this::deleteMany);
     }
@@ -142,7 +151,10 @@ public class MenuREST extends GenericREST {
             return badRequest().bodyValue(e.getMessage());
         }
 
-        return customRepo.sysGetFirstRoledMenuPathByUserIdAndDepId(userId, depId, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .sysGetFirstRoledMenuPathByUserIdAndDepId(userId, depId, includeDeleted, includeDisabled)
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> sysGetAllMenuList(ServerRequest request) {
@@ -158,7 +170,8 @@ public class MenuREST extends GenericREST {
         String sortByCreatedDateStr = request.queryParam("sortByCreatedDate").orElse("false");
 
         try {
-            if (sortByCreatedDateStr != null && !"null".equals(sortByCreatedDateStr)) sortByCreatedDate = Boolean.parseBoolean(sortByCreatedDateStr);
+            if (sortByCreatedDateStr != null && !"null".equals(sortByCreatedDateStr)) sortByCreatedDate =
+                Boolean.parseBoolean(sortByCreatedDateStr);
         } catch (Exception e) {
             e.printStackTrace();
             return error("depId", "SYS.MSG.INVILID_SORT");
@@ -186,7 +199,10 @@ public class MenuREST extends GenericREST {
             return badRequest().bodyValue(e.getMessage());
         }
 
-        return customRepo.sysGetRoledMenuPathListByUserId(auth.getUserId(), includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .sysGetRoledMenuPathListByUserId(auth.getUserId(), includeDeleted, includeDisabled)
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> sysGetRoledMenuListByUserIdAndDepId(ServerRequest request) {
@@ -218,7 +234,10 @@ public class MenuREST extends GenericREST {
             return badRequest().bodyValue(e.getMessage());
         }
 
-        return customRepo.sysGetRoledMenuListByUserIdAndDepId(userId, depId, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .sysGetRoledMenuListByUserIdAndDepId(userId, depId, includeDeleted, includeDisabled)
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> save(LinkedHashMap<String, String> serverError, MenuReq menuReq) {
@@ -245,7 +264,10 @@ public class MenuREST extends GenericREST {
                                             savedMenu -> {
                                                 return saveManyMenuOrg(savedMenu.getId(), menuReq.getInsertDepIds())
                                                     .flatMap(item -> ok(item, Menu.class))
-                                                    .then(deleteManyMenuOrg(savedMenu.getId(), menuReq.getDeleteDepIds()).flatMap(res -> ok(res, List.class)));
+                                                    .then(
+                                                        deleteManyMenuOrg(savedMenu.getId(), menuReq.getDeleteDepIds())
+                                                            .flatMap(res -> ok(res, List.class))
+                                                    );
                                             }
                                         );
                                 }
@@ -280,7 +302,13 @@ public class MenuREST extends GenericREST {
                                             updatedMenu -> {
                                                 return saveManyMenuOrg(updatedMenu.getId(), menuReq.getInsertDepIds())
                                                     .flatMap(item -> ok(item, Menu.class))
-                                                    .then(deleteManyMenuOrg(updatedMenu.getId(), menuReq.getDeleteDepIds()).flatMap(res -> ok(res, List.class)));
+                                                    .then(
+                                                        deleteManyMenuOrg(
+                                                                updatedMenu.getId(),
+                                                                menuReq.getDeleteDepIds()
+                                                            )
+                                                            .flatMap(res -> ok(res, List.class))
+                                                    );
                                             }
                                         );
                                 }
@@ -345,7 +373,9 @@ public class MenuREST extends GenericREST {
                 .fromIterable(depIds)
                 .flatMap(
                     depId -> {
-                        return menuOrgRepo.findByMenuIdAndOrgId(menuId, depId).switchIfEmpty(doSaveMenuOrg(menuId, depId));
+                        return menuOrgRepo
+                            .findByMenuIdAndOrgId(menuId, depId)
+                            .switchIfEmpty(doSaveMenuOrg(menuId, depId));
                     }
                 )
                 .collectList();

@@ -19,7 +19,12 @@ public class CustomTableUtilRepo extends BaseR2dbcRepository {
     public Mono<String> hasAnyDeletedRecord(String tableName, Boolean onlyMe, Long userId) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "tableName", "onlyMe", "userId")).bind("tableName", tableName).bind("onlyMe", onlyMe).bind("userId", userId);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "tableName", "onlyMe", "userId"))
+                .bind("tableName", tableName)
+                .bind("onlyMe", onlyMe)
+                .bind("userId", userId);
 
         return ret.as(String.class).fetch().first();
     }
@@ -35,7 +40,13 @@ public class CustomTableUtilRepo extends BaseR2dbcRepository {
 	--	updatedBy
 	--	updatedDate
 	*/
-    public Mono<String> restoreOrForeverDelete(String tableName, String deleteIds, String restoreIds, Long updatedBy, Long updatedDate) {
+    public Mono<String> restoreOrForeverDelete(
+        String tableName,
+        String deleteIds,
+        String restoreIds,
+        Long updatedBy,
+        Long updatedDate
+    ) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
         var ret =
@@ -45,9 +56,11 @@ public class CustomTableUtilRepo extends BaseR2dbcRepository {
                 .bind("updatedBy", updatedBy)
                 .bind("updatedDate", updatedDate);
 
-        if (deleteIds == null) ret = ret.bindNull("deleteIds", String.class); else ret = ret.bind("deleteIds", deleteIds);
+        if (deleteIds == null) ret = ret.bindNull("deleteIds", String.class); else ret =
+            ret.bind("deleteIds", deleteIds);
 
-        if (restoreIds == null) ret = ret.bindNull("restoreIds", String.class); else ret = ret.bind("restoreIds", restoreIds);
+        if (restoreIds == null) ret = ret.bindNull("restoreIds", String.class); else ret =
+            ret.bind("restoreIds", restoreIds);
 
         return ret.as(String.class).fetch().first();
     }
@@ -89,12 +102,33 @@ public class CustomTableUtilRepo extends BaseR2dbcRepository {
 	-- _user_id
 	-- _include_disabled
 	 */
-    public Mono<String> getSimpleList(String tableName, String columns, String orderBy, Long page, Long pageSize, Boolean onlyMe, Long userId, Boolean includeDisabled) {
+    public Mono<String> getSimpleList(
+        String tableName,
+        String columns,
+        String orderBy,
+        Long page,
+        Long pageSize,
+        Boolean onlyMe,
+        Long userId,
+        Boolean includeDisabled
+    ) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
         var ret =
             this.databaseClient()
-                .execute(genSql(methodName, "tableName", "columns", "orderBy", "page", "pageSize", "onlyMe", "userId", "includeDisabled"))
+                .execute(
+                    genSql(
+                        methodName,
+                        "tableName",
+                        "columns",
+                        "orderBy",
+                        "page",
+                        "pageSize",
+                        "onlyMe",
+                        "userId",
+                        "includeDisabled"
+                    )
+                )
                 .bind("tableName", tableName)
                 .bind("columns", columns)
                 .bind("orderBy", orderBy)
@@ -118,7 +152,11 @@ public class CustomTableUtilRepo extends BaseR2dbcRepository {
     public Mono<String> getOneById(String tableName, Long id) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "tableName", "id")).bind("tableName", tableName).bind("id", id);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "tableName", "id"))
+                .bind("tableName", tableName)
+                .bind("id", id);
 
         return ret.as(String.class).fetch().first();
     }

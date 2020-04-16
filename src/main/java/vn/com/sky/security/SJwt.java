@@ -68,7 +68,10 @@ public class SJwt implements Serializable {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            HasuraClaims obj = mapper.readValue(getAllClaimsFromToken(token).get("https://hasura.io/jwt/claims").toString(), HasuraClaims.class);
+            HasuraClaims obj = mapper.readValue(
+                getAllClaimsFromToken(token).get("https://hasura.io/jwt/claims").toString(),
+                HasuraClaims.class
+            );
             return obj.getXHasuraUsername();
         } catch (JsonMappingException e) {
             e.printStackTrace();
@@ -82,7 +85,10 @@ public class SJwt implements Serializable {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            HasuraClaims obj = mapper.readValue(getAllClaimsFromToken(token).get("https://hasura.io/jwt/claims").toString(), HasuraClaims.class);
+            HasuraClaims obj = mapper.readValue(
+                getAllClaimsFromToken(token).get("https://hasura.io/jwt/claims").toString(),
+                HasuraClaims.class
+            );
             return obj.getXHasuraUserId();
         } catch (JsonMappingException e) {
             e.printStackTrace();
@@ -125,7 +131,14 @@ public class SJwt implements Serializable {
             KeyFactory kf = KeyFactory.getInstance("RSA");
             PrivateKey privKey = kf.generatePrivate(keySpec);
 
-            return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(createdDate).setExpiration(expirationDate).signWith(privKey, SignatureAlgorithm.RS256).compact();
+            return Jwts
+                .builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(createdDate)
+                .setExpiration(expirationDate)
+                .signWith(privKey, SignatureAlgorithm.RS256)
+                .compact();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -161,7 +174,11 @@ public class SJwt implements Serializable {
         String privateKeyPEM = readFileToString(fileName);
 
         // strip of header, footer, newlines, whitespaces
-        privateKeyPEM = privateKeyPEM.replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "").replaceAll("\\s", "");
+        privateKeyPEM =
+            privateKeyPEM
+                .replace("-----BEGIN PRIVATE KEY-----", "")
+                .replace("-----END PRIVATE KEY-----", "")
+                .replaceAll("\\s", "");
 
         // decode to get the binary DER representation
         byte[] privateKeyDER = Base64.getDecoder().decode(privateKeyPEM);

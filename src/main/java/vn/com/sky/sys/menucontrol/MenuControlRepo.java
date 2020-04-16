@@ -9,6 +9,8 @@ public interface MenuControlRepo extends ReactiveCrudRepository<MenuControl, Lon
     @Query("select * from menu_control where deleted_by is null and menu_id = :menuId and control_id = :controlId")
     public Mono<MenuControl> findByMenuIdAndControlId(Long menuId, Long controlId);
 
-    @Query("select * from menu_control where deleted_by is null and menu_id in (select id from menu where path = :menuPath and deleted_by is null and disabled = false) and control_id = :controlId")
+    @Query(
+        "select * from menu_control where deleted_by is null and menu_id in (select id from menu where path = :menuPath and deleted_by is null and disabled = false) and control_id = :controlId"
+    )
     public Mono<MenuControl> findByMenuPathAndControlId(String menuPath, Long controlId);
 }

@@ -59,7 +59,10 @@ public class TableUtilREST extends GenericREST {
             return error("onlyMe", "SYS.MSG.INVILID_ONLY_ME");
         }
 
-        return customRepo.hasAnyDeletedRecord(tableName, onlyMe, auth.getUserId()).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .hasAnyDeletedRecord(tableName, onlyMe, auth.getUserId())
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> restoreOrForeverDelete(ServerRequest request) {
@@ -81,7 +84,10 @@ public class TableUtilREST extends GenericREST {
 
         if ((restoreIds != null && restoreIds.trim().length() == 0) || "null".equals(restoreIds)) restoreIds = null;
 
-        return customRepo.restoreOrForeverDelete(tableName, deleteIds, restoreIds, auth.getUserId(), SDate.now()).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .restoreOrForeverDelete(tableName, deleteIds, restoreIds, auth.getUserId(), SDate.now())
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> getAllDeletedRecords(ServerRequest request) {
@@ -107,7 +113,10 @@ public class TableUtilREST extends GenericREST {
             return error("onlyMe", "SYS.MSG.INVILID_ONLY_ME");
         }
 
-        return customRepo.getAllDeletedRecords(tableName, columns, onlyMe, auth.getUserId()).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .getAllDeletedRecords(tableName, columns, onlyMe, auth.getUserId())
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> getSimpleList(ServerRequest request) {
@@ -143,7 +152,10 @@ public class TableUtilREST extends GenericREST {
             return badRequest().bodyValue(e);
         }
 
-        return customRepo.getSimpleList(tableName, columns, orderBy, page, pageSize, onlyMe, auth.getUserId(), includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .getSimpleList(tableName, columns, orderBy, page, pageSize, onlyMe, auth.getUserId(), includeDisabled)
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> getOneById(ServerRequest request) {
@@ -185,7 +197,10 @@ public class TableUtilREST extends GenericREST {
 
         if (deletedIds == null || "null".equals(deletedIds)) return badRequest().bodyValue(Message.INVALID_ID);
 
-        return customRepo.softDeleteMany(tableName, deletedIds, auth.getUserId(), SDate.now()).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .softDeleteMany(tableName, deletedIds, auth.getUserId(), SDate.now())
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> getAllColumnsOfTable(ServerRequest request) {
@@ -223,6 +238,9 @@ public class TableUtilREST extends GenericREST {
         if (tableName == null || "null".equals(tableName)) return badRequest().bodyValue(Message.INVALID_TABLE_NAME);
         if (expression == null || "null".equals(expression)) return badRequest().bodyValue(Message.INVALID_EXPRESSION);
 
-        return customRepo.updateTableById(tableName, expression, id, auth.getUserId(), SDate.now()).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .updateTableById(tableName, expression, id, auth.getUserId(), SDate.now())
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 }

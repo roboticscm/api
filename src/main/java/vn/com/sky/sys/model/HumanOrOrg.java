@@ -94,7 +94,10 @@ public class HumanOrOrg extends GenericEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         var roles = new ArrayList<JwtRole>();
-        return roles.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).collect(Collectors.toList());
+        return roles
+            .stream()
+            .map(authority -> new SimpleGrantedAuthority(authority.name()))
+            .collect(Collectors.toList());
     }
 
     @JsonIgnore

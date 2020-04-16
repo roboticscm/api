@@ -17,7 +17,11 @@ public class CustomUserSettingsRepo extends BaseR2dbcRepository {
     public Mono<String> sysGetUserSettings(Long userId, Long companyId) {
         String methodName = new Object() {}.getClass().getEnclosingMethod().getName();
 
-        var ret = this.databaseClient().execute(genSql(methodName, "userId", "companyId")).bind("userId", userId).bind("companyId", companyId);
+        var ret =
+            this.databaseClient()
+                .execute(genSql(methodName, "userId", "companyId"))
+                .bind("userId", userId)
+                .bind("companyId", companyId);
 
         return ret.as(String.class).fetch().first();
     }

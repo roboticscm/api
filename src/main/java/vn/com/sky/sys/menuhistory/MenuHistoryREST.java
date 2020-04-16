@@ -27,7 +27,8 @@ public class MenuHistoryREST extends GenericREST {
 
     @Bean
     public RouterFunction<?> menuHistoryRoutes() {
-        return route(GET(buildURL("menu-history", this::test)), this::test).andRoute(POST(buildURL("menu-history", this::saveOrUpdate)), this::saveOrUpdate);
+        return route(GET(buildURL("menu-history", this::test)), this::test)
+            .andRoute(POST(buildURL("menu-history", this::saveOrUpdate)), this::saveOrUpdate);
     }
 
     private Mono<ServerResponse> test(ServerRequest request) {

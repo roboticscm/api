@@ -7,4 +7,5 @@ public class Message {
     public static final String INVALID_ID = "SYS.MSG.INVALID_ID";
     public static final String USERNAME_EXISTED = "SYS.MSG.USERNAME_EXISTED";
     public static final String EMAIL_EXISTED = "SYS.MSG.EMAIL_EXISTED";
+    public static final String NAME_IS_REQUIRED = "SYS.MSG.NAME_IS_REQUIRED";
 }

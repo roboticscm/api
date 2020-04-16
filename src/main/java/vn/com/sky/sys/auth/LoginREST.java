@@ -60,7 +60,10 @@ public class LoginREST extends GenericREST {
         }
         // END SYSTEM BLOCK CODE
         try {
-            return loginService.loginWithoutGenToken(request).flatMap(item -> ok(item, SimpleAuthResponse.class)).onErrorResume(e -> error(e));
+            return loginService
+                .loginWithoutGenToken(request)
+                .flatMap(item -> ok(item, SimpleAuthResponse.class))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,9 +79,10 @@ public class LoginREST extends GenericREST {
         }
         // END SYSTEM BLOCK CODE
 
-        return authTokenRepo.save(new AuthToken())
-        		.map(savedAuthToken -> savedAuthToken.getId())
-        		.flatMap(token -> ok(token, Long.class));
+        return authTokenRepo
+            .save(new AuthToken())
+            .map(savedAuthToken -> savedAuthToken.getId())
+            .flatMap(token -> ok(token, Long.class));
     }
 
     private Mono<ServerResponse> updateAuthToken(ServerRequest request) {
@@ -91,29 +95,38 @@ public class LoginREST extends GenericREST {
         // END SYSTEM BLOCK CODE
 
         return request
-                .bodyToMono(AuthTokenReq.class)
-                .flatMap(
-                    req -> {
-                    	
-                    	return authTokenRepo.findById(req.getId())
-                    			.flatMap(foundAuthToken -> {
-                    				foundAuthToken.setToken(req.getToken());
-                    				foundAuthToken.setUserId(req.getUserId().toString());
-                    				foundAuthToken.setLastLocaleLanguage(req.getLastLocaleLanguage());
-                    				foundAuthToken.setCompanyId(req.getCompanyId().toString());
-                    				System.out.println(foundAuthToken);
-                    				return authTokenRepo.save(foundAuthToken).flatMap(res -> ok(res, AuthToken.class));
-                    			});
-                    });
+            .bodyToMono(AuthTokenReq.class)
+            .flatMap(
+                req -> {
+                    return authTokenRepo
+                        .findById(req.getId())
+                        .flatMap(
+                            foundAuthToken -> {
+                                foundAuthToken.setToken(req.getToken());
+                                foundAuthToken.setUserId(req.getUserId().toString());
+                                foundAuthToken.setLastLocaleLanguage(req.getLastLocaleLanguage());
+                                foundAuthToken.setCompanyId(req.getCompanyId().toString());
+                                System.out.println(foundAuthToken);
+                                return authTokenRepo.save(foundAuthToken).flatMap(res -> ok(res, AuthToken.class));
+                            }
+                        );
+                }
+            );
     }
-    
-    
+
     private Mono<ServerResponse> loginHandler(ServerRequest request) {
-    	request.remoteAddress().ifPresent(action-> {
-    		System.out.println("xxx " + action);
-    	});
+        request
+            .remoteAddress()
+            .ifPresent(
+                action -> {
+                    System.out.println("xxx " + action);
+                }
+            );
         try {
-            return loginService.login(request).flatMap(item -> ok(item, AuthResponse.class)).onErrorResume(e -> error(e));
+            return loginService
+                .login(request)
+                .flatMap(item -> ok(item, AuthResponse.class))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }

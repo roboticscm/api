@@ -32,11 +32,20 @@ public class OwnerOrgREST extends GenericREST {
         return route(GET(buildURL("owner-org", this::sysGetOwnerOrgTree)), this::sysGetOwnerOrgTree)
             .andRoute(GET(buildURL("owner-org", this::sysGetCompanyList)), this::sysGetCompanyList)
             .andRoute(GET(buildURL("owner-org", this::sysGetOwnerOrgRoleTree)), this::sysGetOwnerOrgRoleTree)
-            .andRoute(GET(buildURL("owner-org", this::sysGetAvailableDepartmentTreeForMenu)), this::sysGetAvailableDepartmentTreeForMenu)
-            .andRoute(GET(buildURL("owner-org", this::sysGetDepartmentTreeByMenuId)), this::sysGetDepartmentTreeByMenuId)
+            .andRoute(
+                GET(buildURL("owner-org", this::sysGetAvailableDepartmentTreeForMenu)),
+                this::sysGetAvailableDepartmentTreeForMenu
+            )
+            .andRoute(
+                GET(buildURL("owner-org", this::sysGetDepartmentTreeByMenuId)),
+                this::sysGetDepartmentTreeByMenuId
+            )
             .andRoute(GET(buildURL("owner-org", this::sysGetHumanOrgTree)), this::sysGetHumanOrgTree)
             .andRoute(GET(buildURL("owner-org", this::sysGetAssignedHumanOrgTree)), this::sysGetAssignedHumanOrgTree)
-            .andRoute(GET(buildURL("owner-org", this::sysGetRoledDepartmentListByUserId)), this::sysGetRoledDepartmentListByUserId);
+            .andRoute(
+                GET(buildURL("owner-org", this::sysGetRoledDepartmentListByUserId)),
+                this::sysGetRoledDepartmentListByUserId
+            );
     }
 
     private Mono<ServerResponse> sysGetCompanyList(ServerRequest request) {
@@ -84,7 +93,10 @@ public class OwnerOrgREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetOwnerOrgTree(includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetOwnerOrgTree(includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,7 +123,10 @@ public class OwnerOrgREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetOwnerOrgRoleTree(includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetOwnerOrgRoleTree(includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -138,7 +153,10 @@ public class OwnerOrgREST extends GenericREST {
         }
 
         try {
-            return customRepo.sysGetRoledDepartmentListByUserId(userId, includeDeleted, includeDisabled).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+            return customRepo
+                .sysGetRoledDepartmentListByUserId(userId, includeDeleted, includeDisabled)
+                .flatMap(item -> ok(item))
+                .onErrorResume(e -> error(e));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -189,7 +207,10 @@ public class OwnerOrgREST extends GenericREST {
             return error("menuId", "SYS.MSG.INVILID_MENU_ID");
         }
 
-        return customRepo.sysGetAvailableDepartmentTreeForMenu(menuId).flatMap(item -> ok(item)).onErrorResume(e -> error(e));
+        return customRepo
+            .sysGetAvailableDepartmentTreeForMenu(menuId)
+            .flatMap(item -> ok(item))
+            .onErrorResume(e -> error(e));
     }
 
     private Mono<ServerResponse> sysGetHumanOrgTree(ServerRequest request) {

@@ -75,7 +75,12 @@ public class GenericREST {
 
     protected Mono<ServerResponse> error(Throwable e) {
         e.printStackTrace();
-        return Mono.just(((Exception) e).getMessage()).flatMap(errorRes -> ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(e.getMessage()));
+        return Mono
+            .just(((Exception) e).getMessage())
+            .flatMap(
+                errorRes ->
+                    ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue(e.getMessage())
+            );
     }
 
     protected Mono<ServerResponse> error(String e) {
@@ -83,7 +88,10 @@ public class GenericREST {
     }
 
     protected Mono<ServerResponse> error(String field, String message) {
-        return ServerResponse.badRequest().contentType(MediaType.APPLICATION_JSON).bodyValue("{\"" + field + "\":" + "\"" + message + "\"}");
+        return ServerResponse
+            .badRequest()
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue("{\"" + field + "\":" + "\"" + message + "\"}");
     }
 
     protected Mono<ServerResponse> error(HashMap<String, String> hmError) {
@@ -107,7 +115,11 @@ public class GenericREST {
         }
     }
 
-    protected <T extends GenericEntity> Mono<T> saveEntity(ReactiveCrudRepository<T, Long> repo, T entity, AuthenticationManager auth) {
+    protected <T extends GenericEntity> Mono<T> saveEntity(
+        ReactiveCrudRepository<T, Long> repo,
+        T entity,
+        AuthenticationManager auth
+    ) {
         entity.createdBy(auth.getUserId());
         entity.setCreatedDate(SDate.now());
         entity.setVersion(1);
@@ -116,12 +128,20 @@ public class GenericREST {
         return repo.save(entity);
     }
 
-    protected <T extends GenericEntity> Mono<T> updateEntity(ReactiveCrudRepository<T, Long> repo, T entity, AuthenticationManager auth) {
+    protected <T extends GenericEntity> Mono<T> updateEntity(
+        ReactiveCrudRepository<T, Long> repo,
+        T entity,
+        AuthenticationManager auth
+    ) {
         entity.updatedBy(auth.getUserId());
         return repo.save(entity);
     }
 
-    protected <T extends GenericEntity> Mono<T> softDeleteEntity(ReactiveCrudRepository<T, Long> repo, T entity, AuthenticationManager auth) {
+    protected <T extends GenericEntity> Mono<T> softDeleteEntity(
+        ReactiveCrudRepository<T, Long> repo,
+        T entity,
+        AuthenticationManager auth
+    ) {
         entity.deletedBy(auth.getUserId());
         return repo.save(entity);
     }
@@ -172,7 +192,10 @@ public class GenericREST {
     }
 
     protected Long getLongParam(ServerRequest request, String paramName, Long defaultValue) throws Exception {
-        var value = URLDecoder.decode(request.queryParam(paramName).orElse(defaultValue != null ? defaultValue.toString() : ""), StandardCharsets.UTF_8);
+        var value = URLDecoder.decode(
+            request.queryParam(paramName).orElse(defaultValue != null ? defaultValue.toString() : ""),
+            StandardCharsets.UTF_8
+        );
 
         try {
             return Long.parseLong(value);
@@ -186,7 +209,10 @@ public class GenericREST {
     }
 
     protected Boolean getBoolParam(ServerRequest request, String paramName, Boolean defaultValue) throws Exception {
-        var value = URLDecoder.decode(request.queryParam(paramName).orElse(defaultValue != null ? defaultValue.toString() : ""), StandardCharsets.UTF_8);
+        var value = URLDecoder.decode(
+            request.queryParam(paramName).orElse(defaultValue != null ? defaultValue.toString() : ""),
+            StandardCharsets.UTF_8
+        );
         try {
             return Boolean.parseBoolean(value);
         } catch (Exception e) {
@@ -198,7 +224,13 @@ public class GenericREST {
         return getBoolParam(request, paramName, null);
     }
 
-    protected <T extends GenericEntity> Mono<List<T>> saveManyRelation(OneToOneRepo<T> repo, Long mainId, ArrayList<Long> subIds, SaveOneToOneRelation<T> saveOneToOne, AuthenticationManager auth) {
+    protected <T extends GenericEntity> Mono<List<T>> saveManyRelation(
+        OneToOneRepo<T> repo,
+        Long mainId,
+        ArrayList<Long> subIds,
+        SaveOneToOneRelation<T> saveOneToOne,
+        AuthenticationManager auth
+    ) {
         if (subIds == null) {
             return Mono.empty();
         } else {
@@ -220,7 +252,11 @@ public class GenericREST {
         }
     }
 
-    protected <T extends GenericEntity> Mono<List<Void>> deleteManyRelation(OneToOneRepo<T> repo, Long mainId, ArrayList<Long> subIds) {
+    protected <T extends GenericEntity> Mono<List<Void>> deleteManyRelation(
+        OneToOneRepo<T> repo,
+        Long mainId,
+        ArrayList<Long> subIds
+    ) {
         if (subIds == null) {
             return Mono.empty();
         } else {
